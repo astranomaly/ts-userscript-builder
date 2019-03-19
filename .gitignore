@@ -1,0 +1,11 @@
+.DS_Store
+node_modules
+*.tmp*
+.sass-cache
+build
+*.sublime*
+*.code-*
+.vscode
+
+# Remove this entry if you plan on hosting your compiled script alongside the source
+release
