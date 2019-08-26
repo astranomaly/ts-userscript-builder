@@ -13,19 +13,20 @@
   "scripts": {
     "watch": "npx gulp watch",
     "build": "npx gulp build",
-    "release": "npx gulp release",
-    "clean": "npx gulp clean"
+    "clean": "npx gulp clean",
+    "version": "npx gulp release && git add .",
+    "postversion": "git push && git push --tags && npm run clean"
   },
   "devDependencies": {
     "@types/greasemonkey": "0.0.28",
     "del": "^3.0.0",
-    "gulp": "^4.0.0",
-    "gulp-header": "^2.0.5",
+    "gulp": "^4.0.2",
+    "gulp-header": "^2.0.9",
     "gulp-inject-string": "^1.1.1",
     "gulp-sourcemaps": "^2.6.4",
     "gulp-typescript": "^5.0.0-alpha.3",
     "gulp-uglify-es": "^1.0.4",
-    "typescript": "^3.0.1"
+    "typescript": "^3.5.3"
   },
   "dependencies": {}
 }

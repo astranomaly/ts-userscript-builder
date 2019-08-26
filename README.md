@@ -29,4 +29,4 @@ For best results, use [Violentmonkey](https://violentmonkey.github.io/get-it/) w
 
 For continuous development, run `npm run watch`. This task may halt when Typescript encounters an error, but will otherwise retranspile the script every time you save.
 
-When you are ready to release your script, use [`npm version <newversion>`](https://docs.npmjs.com/cli/version) to increment your script, then `npm run release`. This will output a minified JavaScript file without the `_dev` suffix.
+When you are ready to release your script, use [`npm version <newversion>`](https://docs.npmjs.com/cli/version) to increment your script. This will increment the version, output a minified JavaScript file without the `_dev` suffix, push the changes, and clean the project directory.
