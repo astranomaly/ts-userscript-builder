@@ -1,4 +1,4 @@
-# Userscript Typescript Template
+# TypeScript Userscript Builder
 ## Or, how I learned to stop Googling and take matters into my own hands
 
 This is a template that generates a userscript from Typescript using Gulp 4. While the actual functionality of the userscript is completely up to you, this template will provide an easily customizable workflow to simplify development. Or that's the theory anyway! Gulp 4 is not currently documented and I've never developed with Typescript before (especially not within the constraints of a userscript), so piecing together something functional has not been an easy task. Please feel free to reports bugs/suggestions.
