@@ -1,4 +1,5 @@
 const Gulp = require('gulp');
+const { series, parallel } = require('gulp');
 const Del = require('del');
 const Ts = require('gulp-typescript');
 const Srcmap = require('gulp-sourcemaps');
