@@ -1,6 +1,6 @@
 {
   "name": "ts-userscript",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A template to quickly start developing userscripts with TypeScript",
   "author": "The Outpost",
   "homepage": "https://github.com/astranomaly/ts-userscript-builder#readme",
