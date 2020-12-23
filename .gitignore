@@ -8,4 +8,5 @@ build
 .vscode
 
 # Remove this entry if you plan on hosting your compiled script alongside the source
+# You will have to remove the `clean` step from the gulpfile as well
 release
