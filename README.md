@@ -6,7 +6,7 @@ This is a template that generates a userscript from Typescript using Gulp 4. Whi
 ### Prerequisites
 
 - [Node.js](https://nodejs.org/en/download/)
-- tslint (not currently included because vscode has baked-in linting)
+- [Violentmonkey](https://violentmonkey.github.io/) (For optimal workflow)
 
 # Initializing your userscript
 

@@ -38,7 +38,7 @@ let env = 'dev';
 const basePathEnv = () => {
     let pathObj = path.dev_scripts;
     pkg.env = '_dev';
-    if ( env == 'release' ) {
+    if ( env === 'release' ) {
         pathObj = path.scripts;
         pkg.env = '';
     }
