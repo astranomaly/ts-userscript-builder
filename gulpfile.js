@@ -24,16 +24,17 @@ const path = {
     }
 }
 
-let tsSettings = {
+const tsSettings = {
     strict: true,
     target: "es6",
-    rootDir: "src"
+    rootDir: "src",
+    lib: ['dom', 'es6']
 }
 
 let env = 'dev';
 
 /** Returns a path object relative to the env */
-function basePathEnv(){
+const basePathEnv = () => {
     let pathObj = path.dev_scripts;
     pkg.env = '_dev';
     if ( env == 'release' ) {
@@ -44,107 +45,93 @@ function basePathEnv(){
 }
 
 /** Returns the current timestamp */
-function buildTime(){
+const buildTime = () => {
     const mString = [ "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" ];
-    let now = new Date();
-    let month = mString[ now.getUTCMonth() ];
-    let day = now.getUTCDate();
-    return `${month} ${day}`;
+    const now = new Date();
+    return `${mString[ now.getUTCMonth() ]} ${now.getUTCDate()}`;
 }
 
 /** Task to clean the output directories */
-Gulp.task(
-    'clean', () => {
-        return Del( [ path.dev_scripts.dest ] );
-    }
-);
+const clean = () => Del( [ path.dev_scripts.dest ] );
 
 /** Task to set the working Env to release */
-Gulp.task(
-    'releaseEnv', () => {
-        return new Promise( (resolve) => {
-            env = 'release';
-            resolve();
-        } );
-    }
-);
+const releaseEnv = () => {
+    return new Promise((resolve) => {
+        env = 'release';
+        resolve();
+    });
+};
 
 /** Task to minify the userscript */
-Gulp.task(
-    'minify', () => {
-        let loc = basePathEnv();
-        return Gulp.src( `${loc.dest}/${loc.name}` )
-            .pipe( Min() )
-            .pipe( Gulp.dest( loc.dest ) );
-    }
-);
+const minify = () => {
+    const loc = basePathEnv();
+    return Gulp.src(`${loc.dest}/${loc.name}`)
+        .pipe(Min())
+        .pipe(Gulp.dest(loc.dest));
+};
 
 /** Task to insert a userscript header from a file, with package.json info */
-Gulp.task(
-    'insertHead', () => {
-        let loc = basePathEnv();
-        return Gulp.src( `${loc.dest}/${loc.name}` )
+const insertHead = () => {
+    const loc = basePathEnv();
+    return (
+        Gulp.src(`${loc.dest}/${loc.name}`)
             // Insert userscript header
-            .pipe( Header( Fs.readFileSync( 'metadata.txt', 'utf8' ), { pkg: pkg } ) )
+            .pipe(Header(Fs.readFileSync('metadata.txt', 'utf8'), { pkg: pkg }))
             // Output the file
-            .pipe( Gulp.dest( loc.dest ) );
-    }
-);
+            .pipe(Gulp.dest(loc.dest))
+    );
+};
 
 /** Task to convert the .ts files into a _dev.user.js file */
-Gulp.task(
-    'procTS_dev', () => {
-        let loc = basePathEnv();
-        tsSettings.outFile = loc.name;
-        let timestamp = buildTime();
-
-        return Gulp.src( globs.app, { base: 'src' } )
-            // Initiate sourcemap
-            /* TODO:
-            * Figure out why sourcemapping displays everything as originating from
-            * the last line of the main file
-            */
-            .pipe( Srcmap.init() )
-                // Inject timestamp
-                .pipe( Inject.replace( '##timestamp##', timestamp ) )
-                // Compile typescript
-                .pipe( Ts( tsSettings ) )
-            // Write sourcemap
-            .pipe( Srcmap.write() )
-            // Output the file
-            .pipe( Gulp.dest( loc.dest ) );
-    }
-);
-/** Task to convert the .ts files into a .user.js file */
-Gulp.task(
-    'procTS_build', () => {
-        let loc = basePathEnv();
-        tsSettings.outFile = loc.name;
-        let timestamp = buildTime();
-
-        return Gulp.src( globs.app )
-            // Inject timestamp
-            .pipe( Inject.replace( '##timestamp##', timestamp ) )
+const procTS_dev = () => {
+    const loc = basePathEnv();
+    tsSettings.outFile = loc.name;
+    const timestamp = buildTime();
+    return (
+        Gulp.src(globs.app, { base: 'src' })
+            .pipe(Srcmap.init())
+            // Inject information
+            .pipe(Inject.replace('##timestamp##', timestamp))
             // Compile typescript
-            .pipe( Ts( tsSettings ) )
+            .pipe(Ts(tsSettings))
+            // Write sourcemap
+            .pipe(Srcmap.write())
             // Output the file
-            .pipe( Gulp.dest( loc.dest ) );
-    }
-);
+            .pipe(Gulp.dest(loc.dest))
+    );
+};
+
+/** Task to convert the .ts files into a .user.js file */
+const procTS_build = () => {
+    const loc = basePathEnv();
+    tsSettings.outFile = loc.name;
+    const timestamp = buildTime();
+    return (
+        Gulp.src(globs.app)
+            // Inject information
+            .pipe(Inject.replace('##timestamp##', timestamp))
+            // Compile typescript
+            .pipe(Ts(tsSettings))
+            // Output the file
+            .pipe(Gulp.dest(loc.dest))
+    );
+};
 
 /** NPM build task. Use for one-off development */
-Gulp.task(
-    'build', Gulp.series( 'clean','procTS_dev','insertHead' )
-);
+exports.build = series(clean, procTS_dev, insertHead);
 
 /** NPM watch task. Use for continual development */
-Gulp.task(
-    'watch', () => {
-        Gulp.watch( [globs.app, globs.meta], Gulp.series( 'procTS_dev', 'insertHead' ) );
-    }
-);
+exports.watch = () => {
+    Gulp.watch([globs.app, globs.meta], series(procTS_dev, insertHead));
+};
 
 /** NPM release task. Use for publishing the compiled script */
-Gulp.task(
-    'release', Gulp.series( Gulp.parallel('clean','releaseEnv'), 'procTS_build','minify', 'insertHead' )
+exports.release = series(
+    parallel(clean, releaseEnv),
+    procTS_build,
+    minify,
+    insertHead
 );
+
+/** NPM clean task. Use for cleaning the release directory */
+exports.clean = clean;
